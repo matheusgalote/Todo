@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+import * as Yup from 'yup';
 import User from '../models/User';
 
 class UserController {
@@ -9,6 +11,20 @@ class UserController {
         .status(400)
         .json({ message: 'Já existe um usuário com esse email.' });
     }
+
+    const schema = Yup.object().shape({
+      email: Yup.string().email().required(),
+      password: Yup.string().required().min(6),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Campos inválidos' });
+    }
+
+    req.body.password = crypto
+      .createHash('md5')
+      .update(req.body.password)
+      .digest('hex');
 
     const { id, name, email } = await User.create(req.body);
 
