@@ -31,6 +31,20 @@ class UserController {
     return res.status(201).json({ id, name, email });
   }
 
+  async delete(req, res) {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: 'Não existe um usuário com esse id' });
+    }
+
+    await User.destroy({ where: { id } });
+
+    return res.json({ message: 'Usuário deletado' });
+  }
+
   async update(req, res) {
     const { id } = req.params;
 
@@ -65,20 +79,6 @@ class UserController {
     const user = await User.findByPk(id);
 
     return res.json(user);
-  }
-
-  async delete(req, res) {
-    const { id } = req.params;
-
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: 'Não existe um usuário com esse id' });
-    }
-
-    await User.destroy({ where: { id } });
-
-    return res.json({ message: 'Usuário deletado' });
   }
 }
 
