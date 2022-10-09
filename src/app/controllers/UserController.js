@@ -50,6 +50,11 @@ class UserController {
 
     const user = await User.findByPk(id);
 
+    req.body.password = crypto
+      .createHash('md5')
+      .update(req.body.password)
+      .digest('hex');
+
     if (!user) {
       return res
         .status(400)
